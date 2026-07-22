@@ -11,6 +11,7 @@ begin
 	using Missings
 	using Statistics
 	using CategoricalArrays
+	include("../src/preprocessing.jl")
 end
 
 # ╔═╡ d9751532-812c-11f1-9781-2ddb1e6d7f29
@@ -20,52 +21,15 @@ md"Just a simple exploration of what I can *actually* do here."
 
 
 # ╔═╡ c7f76305-1353-4527-8f85-0a6fe52abf80
-input = "./data/raw/processed.cleveland.data"
 
 
 # ╔═╡ a97b8584-fd8e-4604-8cf6-a655617fea88
 # Need to cd to parent directory to access the data dir
 # Missingstring arg can be used to set missing values of type "missing" based on given string ("?" in that case)
-df = CSV.read("../data/raw/processed.cleveland.data", DataFrame; header=false, missingstring = "?")
-
-# ╔═╡ d4ed7934-0cf6-4c8d-84fc-7953ea27244d
-rename!(df, ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num"]);
-
-# ╔═╡ eff4ed6b-03fa-4fbf-8c4b-d71007075102
-md"Filling in missing values"
-
-# ╔═╡ 70b4f7a0-fa4c-4d20-a26d-4de1c51a34e5
-
-# Since ca is numeric value I input it with median of the column
-df.:ca = coalesce.(df.:ca, median(skipmissing(df.:ca)));
-
-# ╔═╡ f259d210-1772-43dc-accb-1d10d0a0b37a
-# Since thal is categorical and has only 2 values missing I just drop those rows
-df_no_missing = dropmissing(df, :thal);
-
-# ╔═╡ 25947e45-ecd3-45bc-bcff-b35576ab5834
-#categorical!(df_no_missing, [:sex, :cp, :fbs, :restecg, :exang, :slope, :thal])
-begin
-	df_no_missing.:sex = categorical(df_no_missing.:sex)
-	df_no_missing.:cp = categorical(df_no_missing.:cp)
-	df_no_missing.:fbs = categorical(df_no_missing.:fbs)
-	df_no_missing.:restecg = categorical(df_no_missing.:restecg)
-	df_no_missing.:exang = categorical(df_no_missing.:exang)
-	df_no_missing.:slope = categorical(df_no_missing.:slope)
-	df_no_missing.:thal = categorical(df_no_missing.:thal)
-end
-
-# ╔═╡ c0ccafb6-0ef9-41ba-bd31-7d793d068fe3
-describe(df_no_missing)
-
-# ╔═╡ d277da17-012c-4f7d-9ee3-da08591954cf
-df_no_missing
+df = prepare_data("../data/raw/processed.cleveland.data")
 
 # ╔═╡ cc77a156-4524-4261-b95c-d8d2eb74defd
-
-
-# ╔═╡ 1c522a42-2707-413c-9774-2e96c79af858
-
+describe(df)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -436,14 +400,6 @@ version = "5.15.0+0"
 # ╠═fb6952c5-b36b-4e9c-a2ef-6723a2c8f9da
 # ╠═c7f76305-1353-4527-8f85-0a6fe52abf80
 # ╠═a97b8584-fd8e-4604-8cf6-a655617fea88
-# ╠═d4ed7934-0cf6-4c8d-84fc-7953ea27244d
-# ╠═eff4ed6b-03fa-4fbf-8c4b-d71007075102
-# ╠═70b4f7a0-fa4c-4d20-a26d-4de1c51a34e5
-# ╠═f259d210-1772-43dc-accb-1d10d0a0b37a
-# ╠═25947e45-ecd3-45bc-bcff-b35576ab5834
-# ╠═c0ccafb6-0ef9-41ba-bd31-7d793d068fe3
-# ╠═d277da17-012c-4f7d-9ee3-da08591954cf
 # ╠═cc77a156-4524-4261-b95c-d8d2eb74defd
-# ╠═1c522a42-2707-413c-9774-2e96c79af858
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
