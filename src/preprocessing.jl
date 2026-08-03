@@ -54,6 +54,14 @@ function convert_categorical!(df::DataFrame)
     df.:thal = categorical(df.:thal)
 end
 
+
+"""
+Creates new column for the heart disease presence (in original num column 0 means no disease while 1-4 are different stages fo disease)
+"""
+function remap_target!(df::DataFrame)
+    df.:disease = ifelse.(df.:num .== 0, 0, 1)
+end
+
 """
 Loads the dataset from file to the dataframe, sets column names, handles missing data
 and categorical features and retun the clean dataframe, ready for EDA or model training.
@@ -65,5 +73,6 @@ function prepare_data(path::String)::DataFrame
     set_columns_names!(df)
     handle_missing_data!(df)
     convert_categorical!(df)
+    remap_target!(df)
     return df
 end
